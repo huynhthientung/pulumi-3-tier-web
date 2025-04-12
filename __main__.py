@@ -101,12 +101,12 @@ private_subnet_2 = aws.ec2.Subnet("private-subnet-2",
 
 lambda_sg = aws.ec2.SecurityGroup("lambda-sg",
 	vpc_id=vpc.id,
-	description="Allow Lambda to connect to RDS",
+	description="Allow Lambda to connect to RDS and Secret Manager Endpoint",
 	ingress=[{
 		"protocol": "tcp",
 		"from_port": 5432,
 		"to_port": 5432,
-		"security_groups": [],  # sẽ thêm RDS SG sau
+		"security_groups": [],
 	}],
 	egress=[{
 		"protocol": "-1",
@@ -123,7 +123,7 @@ rds_sg = aws.ec2.SecurityGroup("rds-sg",
 		"protocol": "tcp",
 		"from_port": 5432,
 		"to_port": 5432,
-		"security_groups": [lambda_sg.id],
+		"security_groups": [lambda_sg.id]
 	}],
 	egress=[{
 		"protocol": "-1",
@@ -142,6 +142,17 @@ subnet_group = aws.rds.SubnetGroup("rds-subnet-group",
 	tags={"Name": "rds-subnet-group"}
 )
 
+rds_param_group = aws.rds.ParameterGroup("rds-custom-pg",
+	family="postgres17",
+	description="Custom parameter group with rds.force_ssl disabled",
+	parameters=[
+		aws.rds.ParameterGroupParameterArgs(
+			name="rds.force_ssl",
+			value="0",
+		),
+	]
+)
+
 db_instance = aws.rds.Instance("mydb",
 	engine="postgres",
 	instance_class="db.t3.micro",
@@ -151,7 +162,9 @@ db_instance = aws.rds.Instance("mydb",
 	vpc_security_group_ids=[rds_sg.id],
 	username=db_username,
 	password=db_password,
-	skip_final_snapshot=True
+	parameter_group_name=rds_param_group,
+	skip_final_snapshot=True,
+	apply_immediately=True
 )
 
 # ==============================
@@ -202,6 +215,36 @@ aws.iam.RolePolicyAttachment("lambda-vpc-access",
 	role=lambda_role.name,
 	policy_arn="arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
 )
+
+# ==============================
+# VPC ENDPOINT FOR SECRETS MANAGER
+# ==============================
+secretsmanager_endpoint_sg = aws.ec2.SecurityGroup("secretsmanager-endpoint-sg",
+	vpc_id=vpc.id,
+	description="Allow traffic to Secrets Manager Endpoint from Lambda",
+	ingress=[{
+		"protocol": "tcp",
+		"from_port": 443, # HTTPS port
+		"to_port": 443, # HTTPS port
+		"security_groups": [lambda_sg.id], # Allow from Lambda SG
+	}],
+	egress=[{
+		"protocol": "-1",
+		"from_port": 0,
+		"to_port": 0,
+		"cidr_blocks": ["0.0.0.0/0"], # Allow all outbound (can be restricted if needed)
+	}]
+)
+
+secretsmanager_endpoint = aws.ec2.VpcEndpoint("secretsmanager-endpoint",
+	vpc_id=vpc.id,
+	service_name=f"com.amazonaws.{region}.secretsmanager", # Service name for Secrets Manager in your region
+	vpc_endpoint_type="Interface", # Interface endpoint is needed for Secrets Manager
+	subnet_ids=[private_subnet_1.id, private_subnet_2.id],
+	security_group_ids=[secretsmanager_endpoint_sg.id], # Use dedicated SG for endpoint
+	private_dns_enabled=True # Recommended for easier access within VPC
+)
+
 
 # ==============================
 # LAMBDA FUNCTION
@@ -339,13 +382,16 @@ def inject_api_url(url: str):
 		f.write(html)
 
 api_url.apply(lambda url: inject_api_url(url))
+final_index_object = pulumi.Output.all(api_url).apply(lambda args: (
+	inject_api_url(args[0]),
+	# Upload final index.html to S3
+	aws.s3.BucketObject("index-html",
+		bucket=bucket.id,
+		source=pulumi.FileAsset("index.html"),
+		content_type="text/html"
+	)
+))[1]  # only keep the BucketObject from tuple
 
-# Upload final index.html to S3
-index_html = aws.s3.BucketObject("index-html",
-	bucket=bucket.id,
-	source=pulumi.FileAsset("index.html"),
-	content_type="text/html"
-)
 
 # ==============================
 # OUTPUTS
