@@ -11,9 +11,9 @@
     <pre id="output"></pre>
 
     <script>
-        const apiUrl = "https://gdqat3rsaa.execute-api.ap-southeast-1.amazonaws.com/test/data"; // placeholder
+        const apiUrl = "API_GATEWAY_URL"; // placeholder
         async function fetchData() {
-            const res = await fetch("https://gdqat3rsaa.execute-api.ap-southeast-1.amazonaws.com/test/data/data");
+            const res = await fetch("API_GATEWAY_URL/data");
             const data = await res.json();
             document.getElementById("output").innerText = JSON.stringify(data, null, 2);
         }
