@@ -1,0 +1,11 @@
+name: pulumi-aws-3-tier-web
+description: A minimal AWS Python Pulumi program with 3 tier web
+runtime:
+  name: python
+  options:
+    toolchain: pip
+    virtualenv: venv
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: aws-python
