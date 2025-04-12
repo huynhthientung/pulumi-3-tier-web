@@ -13,7 +13,12 @@ This project provisions a complete 3-tier architecture on AWS using Pulumi and a
 
 ## Architecture Flowchart
 
-![Flowchart](images/project-architecture.png)
+![Flowchart](docs/images/project-architecture.png)
+
+---
+
+## Demo Video
+[![Watch the demo](https://img.youtube.com/vi/fhdxEMJFzys/0.jpg)](https://www.youtube.com/watch?v=fhdxEMJFzys)
 
 ---
 
@@ -103,7 +108,14 @@ Outputs:
 ```
 
 ## Result
+- Auto feedback on the pull request
+![Auto feedback on the pull request](docs/images/auto-feedback-preview.png)
+- Workflow that succeded
+![Workflow that succeded](docs/images/workflow-success.png)
+- Pulumi console after the CI/CD runs successfully
+![Pulumi console after the CI/CD runs successfully](docs/images/pulumi-console-ci-cd-success.png)
 
+Now, we can access the FE by using S3 Static URL.
 
 ---
 
