@@ -1,4 +1,4 @@
-name: Pulumi
+name: Pulumi on Merge
 on:
   push:
     branches:
@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
       - uses: actions/setup-python@v5
         with:
           python-version: 3.11
@@ -22,6 +23,7 @@ jobs:
       - run: |
           pip install --upgrade pip
           pip install -r requirements.txt
+          cd lambda/ && npm install
       - uses: pulumi/actions@v6
         with:
           command: up

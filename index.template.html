@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>3-Tier App</title>
+</head>
+
+<body>
+    <h1>Frontend Connected!</h1>
+    <button onclick="fetchData()">Fetch Data</button>
+    <pre id="output"></pre>
+
+    <script>
+        const apiUrl = "API_GATEWAY_URL"; // placeholder
+        async function fetchData() {
+            const res = await fetch(apiUrl);
+            const data = await res.json();
+            document.getElementById("output").innerText = JSON.stringify(data, null, 2);
+        }
+    </script>
+</body>
+
+</html>
