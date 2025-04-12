@@ -385,7 +385,8 @@ api_url.apply(lambda url: inject_api_url(url))
 final_index_object = pulumi.Output.all(api_url).apply(lambda args: (
 	inject_api_url(args[0]),
 	# Upload final index.html to S3
-	aws.s3.BucketObject("index-html",
+	aws.s3.BucketObject(
+		"index.html",
 		bucket=bucket.id,
 		source=pulumi.FileAsset("index.html"),
 		content_type="text/html"
