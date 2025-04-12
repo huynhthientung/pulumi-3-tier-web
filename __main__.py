@@ -358,15 +358,6 @@ public_access_block = aws.s3.BucketPublicAccessBlock(
 	'public-access-block', bucket=bucket.id, block_public_acls=False
 )
 
-bucket_object = aws.s3.BucketObject(
-	'index.html',
-	bucket=bucket.id,
-	source=pulumi.FileAsset('index.html'),
-	content_type='text/html',
-	acl='public-read',
-	opts=pulumi.ResourceOptions(depends_on=[public_access_block, ownership_controls]),
-)
-
 # ==============================
 # OUTPUT & HTML INJECTION
 # ==============================
@@ -387,10 +378,12 @@ final_index_object = pulumi.Output.all(api_url).apply(lambda args: (
 	inject_api_url(args[0]),
 	# Upload final index.html to S3
 	aws.s3.BucketObject(
-		"index_final.html",
+		'index.html',
 		bucket=bucket.id,
-		source=pulumi.FileAsset("index.html"),
-		content_type="text/html"
+		source=pulumi.FileAsset('index.html'),
+		content_type='text/html',
+		acl='public-read',
+		opts=pulumi.ResourceOptions(depends_on=[public_access_block, ownership_controls]),
 	)
 ))[1]  # only keep the BucketObject from tuple
 

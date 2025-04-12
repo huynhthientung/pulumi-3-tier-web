@@ -1,4 +1,4 @@
-name: Pulumi
+name: Pulumi on Pull Request
 on:
   pull_request:
     branches:
