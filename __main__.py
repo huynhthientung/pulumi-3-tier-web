@@ -266,7 +266,8 @@ lambda_function = aws.lambda_.Function("api-lambda",
 		variables={
 			"SECRET_ARN": db_secret.arn
 		}
-	)
+	),
+	opts=pulumi.ResourceOptions(depends_on=[secretsmanager_endpoint])
 )
 
 # ==============================
@@ -386,7 +387,7 @@ final_index_object = pulumi.Output.all(api_url).apply(lambda args: (
 	inject_api_url(args[0]),
 	# Upload final index.html to S3
 	aws.s3.BucketObject(
-		"index.html",
+		"index_final.html",
 		bucket=bucket.id,
 		source=pulumi.FileAsset("index.html"),
 		content_type="text/html"
@@ -399,6 +400,6 @@ final_index_object = pulumi.Output.all(api_url).apply(lambda args: (
 # ==============================
 
 pulumi.export("api_url", api_url)
-pulumi.export("rds_endpoint", db_instance.endpoint.apply(lambda ep: f"{ep.split(':')[0]}:<hidden>"))
+pulumi.export("rds_endpoint", db_instance.endpoint.apply(lambda ep: f"{ep.split(':')[0]}:<hidden_port>"))
 pulumi.export('bucket_name', bucket.id)
 pulumi.export('bucket_endpoint', pulumi.Output.concat('http://', bucket.website_endpoint))
