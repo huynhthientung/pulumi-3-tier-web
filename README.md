@@ -9,6 +9,35 @@ This project provisions a complete 3-tier architecture on AWS using Pulumi and a
 - **Secrets Management** via AWS Secrets Manager
 - **CI/CD Pipeline** powered by GitHub Actions
 
+## Design Decisions
+
+This section outlines key architectural decisions made during the implementation of this project:
+
+### Why Lambda over EC2
+We chose AWS Lambda instead of EC2 for the backend because:
+- **Serverless model**: Simplifies infrastructure management and removes the need to provision or manage servers.
+- **Cost-efficient**: Pay-per-use model reduces costs, especially for applications with sporadic or variable traffic.
+- **Scalability**: Automatically scales based on demand without manual intervention.
+- **Faster deployment**: Integrates seamlessly with API Gateway for rapid API development.
+
+### Why use a Private Subnet for Lambda and RDS
+- **Security-first approach**: By placing both Lambda and RDS in private subnets, we reduce exposure to the public internet.
+- **Controlled access**: Inbound and outbound traffic is tightly managed via NAT Gateways and security groups.
+- **Best practice**: Keeps sensitive data layers (such as databases) isolated from public access while still reachable by backend services through internal networking.
+
+### Why use Secrets Manager for storing DB credentials
+- **Secure storage**: AWS Secrets Manager encrypts secrets at rest and in transit using AWS KMS.
+- **Automatic rotation**: Credentials can be automatically rotated to enhance security.
+- **Centralized management**: Provides a single source of truth for sensitive information, accessible only via IAM-controlled permissions.
+
+### Why use S3 Bucket instead of Hosting a Server for the Frontend
+- **Scalability**: S3 automatically scales to handle any amount of traffic.
+- **High availability**: S3 provides 99.999999999% durability and integrates with CloudFront for global CDN delivery.
+- **Cost-effective**: No need to maintain or patch a web server—only pay for the storage and bandwidth used.
+- **Simplicity**: Ideal for hosting static websites and SPA (Single Page Applications) with minimal setup.
+
+These decisions reflect a modern, cloud-native architecture that prioritizes **security**, **scalability**, and **cost-efficiency**.
+
 ---
 
 ## Architecture Flowchart
