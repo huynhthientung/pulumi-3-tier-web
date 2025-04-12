@@ -400,6 +400,6 @@ final_index_object = pulumi.Output.all(api_url).apply(lambda args: (
 # ==============================
 
 pulumi.export("api_url", api_url)
-pulumi.export("rds_endpoint", db_instance.endpoint.apply(lambda ep: f"{ep.split(':')[0]}"))
+pulumi.export("rds_endpoint", db_instance.endpoint.apply(lambda ep: f"{ep.split(':')[0]}:<hidden_port>"))
 pulumi.export('bucket_name', bucket.id)
 pulumi.export('bucket_endpoint', pulumi.Output.concat('http://', bucket.website_endpoint))

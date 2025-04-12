@@ -94,9 +94,16 @@ pulumi stack select prod|dev
 pulumi up --yes
 ```
 Pulumi will output information such as:
-- API Gateway URL
-- RDS endpoint
-- S3 Bucket URL
+```bash
+Outputs:
+  api_url         : https://xyz123.execute-api.ap-southeast-1.amazonaws.com/prod/data
+  rds_endpoint    : pulumi-rds.abcxyz123.ap-southeast-1.rds.amazonaws.com::<hidden_port>
+  bucket_name     : dev-my-bucket
+  bucket_endpoint : http://dev-my-bucket.s3-website-ap-southeast-1.amazonaws.com
+```
+
+## Result
+
 
 ---
 
@@ -143,16 +150,6 @@ File path: `.github/workflows/[pull_requests|merge].yaml`
 - Lambda runs inside a VPC and requires proper subnet and security group configuration
 - RDS instance is not public, access is only allowed from Lambda in the same VPC
 - The HTML generation with the correct API_GATEWAY_URL occurs after the stack is provisioned
-
-## Sample Pulumi Output
-```bash
-Outputs:
-  api_url         : https://xyz123.execute-api.ap-southeast-1.amazonaws.com/prod/data
-  rds_endpoint    : pulumi-rds.abcxyz123.ap-southeast-1.rds.amazonaws.com:5432
-  bucket_name     : dev-my-bucket
-  bucket_endpoint : http://dev-my-bucket.s3-website-ap-southeast-1.amazonaws.com
-```
-
 
 ## Author
 Huynh Thien Tung
