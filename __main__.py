@@ -42,7 +42,7 @@ igw = aws.ec2.InternetGateway("vpc-igw",
 public_subnet_1 = aws.ec2.Subnet("public-subnet-1",
 	vpc_id=vpc.id,
 	cidr_block="10.0.1.0/24",
-	availability_zone="ap-southeast-1a",
+	availability_zone=f"{region}a",
 	map_public_ip_on_launch=True,
 	tags={"Name": "public-subnet-1"}
 )
@@ -50,7 +50,7 @@ public_subnet_1 = aws.ec2.Subnet("public-subnet-1",
 public_subnet_2 = aws.ec2.Subnet("public-subnet-2",
 	vpc_id=vpc.id,
 	cidr_block="10.0.2.0/24",
-	availability_zone="ap-southeast-1b",
+	availability_zone=f"{region}b",
 	map_public_ip_on_launch=True,
 	tags={"Name": "public-subnet-2"}
 )
@@ -80,7 +80,7 @@ aws.ec2.RouteTableAssociation("public-rt-assoc-2",
 private_subnet_1 = aws.ec2.Subnet("private-subnet-1",
 	vpc_id=vpc.id,
 	cidr_block="10.0.3.0/24",
-	availability_zone="ap-southeast-1a",
+	availability_zone=f"{region}a",
 	map_public_ip_on_launch=False,
 	tags={"Name": "private-subnet-1"}
 )
@@ -88,7 +88,7 @@ private_subnet_1 = aws.ec2.Subnet("private-subnet-1",
 private_subnet_2 = aws.ec2.Subnet("private-subnet-2",
 	vpc_id=vpc.id,
 	cidr_block="10.0.4.0/24",
-	availability_zone="ap-southeast-1b",
+	availability_zone=f"{region}b",
 	map_public_ip_on_launch=False,
 	tags={"Name": "private-subnet-2"}
 )
