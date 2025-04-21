@@ -4,3 +4,4 @@ venv/
 lambda/node_modules/
 lambda/package-lock.json
 Pulumi.test.yaml
+index.template.html
