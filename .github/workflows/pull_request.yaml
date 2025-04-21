@@ -28,7 +28,5 @@ jobs:
         with:
           command: preview
           stack-name: ${{ github.base_ref == 'master' && 'prod' || 'dev' }}
-          comment-on-pr: true
-          github-token: ${{ secrets.MY_GITHUB_TOKEN }}
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
